@@ -1,28 +1,18 @@
-const {io} = require('../server')
+const {io} = require('../server');
+const { Users } = require('../classes/users');
+
+const users = new Users();
+
 io.on('connection', (client) => {
-    console.log('Connected user');
+    client.on('enterChat', (data, callback) => {
+        if(!data.name) {
+            return callback({
+                error: true,
+                message: 'Name is require'
+            });
+        }
 
-    client.emit('sendMessage', {
-        user: 'Admin',
-        message: 'Welcome to the application'
-    });
-    
-    client.on('disconnect', () => {
-        console.log('User logged out');
-    });
-
-    client.on('sendMessage', (data, callback) => {
-        console.log(data);
-
-        client.broadcast.emit('sendMessage', data);
-        // if(message.user) {
-        //     callback({
-        //         resp: 'All is fine'
-        //     });
-        // } else {
-        //     callback({
-        //         resp: 'All is WRONG!'
-        //     });
-        // }
+        let persons = users.addPerson(client.id, data.name);
+        callback(persons);
     });
 });

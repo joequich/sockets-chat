@@ -1,8 +1,22 @@
 var socket = io();
 
+var params = new URLSearchParams( window.location.search);
+
+if(!params.has('name')) {
+    throw new Error('Name is require');
+}
+
+var user = {
+    name: params.get('name')
+}
+
 // on - listen information
 socket.on('connect', function() {
     console.log('Connected to the server');
+
+    socket.emit('enterChat', user, function(resp) {
+        console.log('Online Users ' +resp);
+    });
 });
 
 socket.on('disconnect', function() {
