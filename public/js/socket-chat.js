@@ -15,7 +15,7 @@ socket.on('connect', function() {
     console.log('Connected to the server');
 
     socket.emit('enterChat', user, function(resp) {
-        console.log('Online Users ' +resp);
+        console.log('Online Users ', resp);
     });
 });
 
@@ -32,6 +32,11 @@ socket.emit('sendMessage',{
 });
 
 // on - listen information
-socket.on('sendMessage', function(message) {
-    console.log(message);
+socket.on('createMessage', function(message) {
+    console.log('Server:',message);
+});
+
+// listen hwen a user enter or left the chat
+socket.on('listPersons', function(message) {
+    console.log('Persons:',message);
 });

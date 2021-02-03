@@ -12,10 +12,7 @@ class Users {
     }
 
     getPerson(id) {
-        let person = this.persons.filter( person => {
-            person.id === id[0];
-        });
-
+        let person = this.persons.filter( person => person.id === id )[0];
         return person;
     }
 
@@ -30,7 +27,7 @@ class Users {
     deletePerson(id) {
         let deletedPerson = this.getPerson(id);
         this.persons = this.persons.filter(person => person.id != id);
-
+        
         return deletedPerson;
     }
 }
