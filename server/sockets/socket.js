@@ -12,25 +12,25 @@ io.on('connection', (client) => {
                 message: 'Name/Room is require'
             });
         }
+        client.join(data.room);
 
         let persons = users.addPerson(client.id, data.name, data.room);
         
-        client.broadcast.emit('listPersons', users.getPersons());
-        callback(persons);
+        client.broadcast.to(data.room).emit('listPersons', users.getPersonByRoom(data.room));
+        callback(users.getPersonByRoom(data.room));
     });
 
-    client.join(data.room);
 
     client.on('createMessage', (data) => {
         let person = users.getPerson(client.id);
         let message = createMessage(person.name, data.message);
-        client.broadcast.emit('createMessage', message);
+        client.broadcast.to(person.room).emit('createMessage', message);
     });
 
     client.on('disconnect', () => {
         let deletedPerson = users.deletePerson(client.id);
-        client.broadcast.emit('createMessage', createMessage('Administrator', `${deletedPerson.name} left the chat.`));
-        client.broadcast.emit('listPersons', users.getPersons());
+        client.broadcast.to(deletedPerson.room).emit('createMessage', createMessage('Administrator', `${deletedPerson.name} left the chat.`));
+        client.broadcast.to(deletedPerson.room).emit('listPersons', users.getPersonByRoom(deletedPerson.room));
     });
 
     // private messages
