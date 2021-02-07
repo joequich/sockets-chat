@@ -13,18 +13,20 @@ io.on('connection', (client) => {
             });
         }
         client.join(data.room);
-
         let persons = users.addPerson(client.id, data.name, data.room);
         
         client.broadcast.to(data.room).emit('listPersons', users.getPersonByRoom(data.room));
+        client.broadcast.to(data.room).emit('createMessage', createMessage('Administrator', `${data.name} join the chat.`));
+
         callback(users.getPersonByRoom(data.room));
     });
 
 
-    client.on('createMessage', (data) => {
+    client.on('createMessage', (data, callback) => {
         let person = users.getPerson(client.id);
         let message = createMessage(person.name, data.message);
         client.broadcast.to(person.room).emit('createMessage', message);
+        callback(message);
     });
 
     client.on('disconnect', () => {
@@ -39,7 +41,4 @@ io.on('connection', (client) => {
 
         client.broadcast.to(data.to).emit('privateMessage', createMessage(person.name, data.message));
     });
-
-
-
 });
